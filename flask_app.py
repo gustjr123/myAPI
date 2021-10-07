@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return 'Hello, World!'
+    return os.environ['TEST_SECRET']
 
 @app.route('/list')
 def list():
@@ -23,3 +23,6 @@ def list():
 
 if __name__ == '__main__':
     app.run()
+
+
+
