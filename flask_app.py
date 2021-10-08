@@ -1,28 +1,24 @@
 from flask import Flask
+import dbModule
 import os
-import subprocess
-import time
 
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return os.environ['TEST_SECRET']
+    return 'hello'
 
 @app.route('/list')
 def list():
-    out = ""
-    try:
-        pid = subprocess.Popen(["ls", "-l"]).pid
-        out = subprocess.check_output(["ls", "-l"])
-    except EnvironmentError:
-        os.kill(pid)
-        print('unable to run subprocess')
-        return
-    return out
+    db_class = dbModule.Database()
+    db_name = os.environ.get('DB_NAME')
+    sql = "SELECT id, name FROM " + db_name + ".members"
+    row = db_class.executeAll(sql)
+
+    print(row)
+
+    return row
 
 if __name__ == '__main__':
     app.run()
-
-
 
