@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 import dbModule
 import os
 
@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return 'hello'
+    return render_template('index.html')
 
 @app.route('/list')
 def list():
@@ -17,7 +17,7 @@ def list():
 
     print(row)
 
-    return row
+    return render_template('test.html', resultData=row)
 
 if __name__ == '__main__':
     app.run()
