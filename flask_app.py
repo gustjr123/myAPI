@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return render_template('index.html')
+    temp = os.getcwd()
+    return render_template('index.html', resultData=temp)
 
 @app.route('/list')
 def list():
