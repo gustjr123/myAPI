@@ -31,7 +31,6 @@ def list():
     print(row)
     return render_template('test.html', resultData=row)
 
-
 class Inputdata(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -47,10 +46,9 @@ class Inputdata(Resource):
             db_name = os.environ.get('DB_NAME')
             sql = "INSERT INTO " + db_name + ".test(name, path) VALUES(" \
                     + name + ", " + path + ")"
+            db_class.execute(sql)
 
-            row = db_class.execute(sql)
-
-        return {'name': name, 'path': path, 'row': row}
+        return {'name': name, 'path': path}
 
 api.add_resource(Inputdata, '/camera')
 
