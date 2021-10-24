@@ -42,7 +42,7 @@ class Inputdata(Resource):
         name = args['name']
         path = args['path']
 
-        if name is not None and path is not None :
+        if name != None and path != None :
             db_class = dbModule.Database()
             db_name = os.environ.get('DB_NAME')
             sql = "INSERT INTO " + db_name + ".test(name, path) VALUES(" \
