@@ -26,7 +26,7 @@ def hello():
 def list():
     db_class = dbModule.Database()
     db_name = os.environ.get('DB_NAME')
-    sql = "SELECT id, name FROM " + db_name + ".test"
+    sql = "SELECT id, name, path FROM " + db_name + ".test"
     row = db_class.executeAll(sql)
     print(row)
     return render_template('test.html', resultData=row)
@@ -40,9 +40,17 @@ class Inputdata(Resource):
         args = parser.parse_args()
 
         name = args['name']
-        email = args['path']
+        path = args['path']
 
-        return {'name': name, 'email': email}
+        if name is not None and path is not None :
+            db_class = dbModule.Database()
+            db_name = os.environ.get('DB_NAME')
+            sql = "INSERT INTO " + db_name + ".test(name, path) VALUES(" \
+                    + name + ", " + path + ")"
+
+            row = db_class.executeAll(sql)
+
+        return {'name': name, 'path': path, 'row': row}
 
 api.add_resource(Inputdata, '/camera')
 
