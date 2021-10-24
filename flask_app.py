@@ -48,7 +48,7 @@ class Inputdata(Resource):
             sql = "INSERT INTO " + db_name + ".test(name, path) VALUES(" \
                     + name + ", " + path + ")"
 
-            row = db_class.executeAll(sql)
+            row = db_class.execute(sql)
 
         return {'name': name, 'path': path, 'row': row}
 
