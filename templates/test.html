@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="kr">
-<head>
-  <h1> head Test </h1><br>
-</head>
+{% extends 'form.html' %}
 
-<body>
-  <div>
-      SELECT id, name, path : {{resultData}}<br>
-  </div>
-  <br>
-</body>
-</html>
+{% block content %}
+
+{% for data in resultData %}
+<div>SELECT id, name, path : {{ data }}<br></div>
+{%  endfor %}
+
+{% endblock %}

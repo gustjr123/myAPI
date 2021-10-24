@@ -41,7 +41,7 @@ class Inputdata(Resource):
         name = args['name']
         path = args['path']
         val = (name, path)
-        
+
         if name != "" and path != "" :
             db_class = dbModule.Database()
             db_name = os.environ.get('DB_NAME')
