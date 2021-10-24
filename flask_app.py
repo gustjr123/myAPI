@@ -44,7 +44,7 @@ class Inputdata(Resource):
         if name != "" and path != "" :
             db_class = dbModule.Database()
             db_name = os.environ.get('DB_NAME')
-            sql = "INSERT INTO test(name, path) VALUES('" + name + "', '" + path + "')"
+            sql = "INSERT INTO " + db_name + ".test(name, path) VALUES('" + name + "', '" + path + "')"
             db_class.execute(sql)
 
         return {'name': name, 'path': path}
