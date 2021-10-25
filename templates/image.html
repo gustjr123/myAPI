@@ -3,11 +3,11 @@
 {% block content %}
 
 {% for file in File_List %}
-<div>files : <a href= {{ url_for('images', image=file) }}> {{ file }}</a><br></div>
+<div>files : <a href= "{{ url_for('images', image=file) }}"> {{ file }}</a><br></div>
 {%  endfor %}
 
 {% if Isfile == 1 %}
-    <img src={{ url_for(filepath) }}>
+    <img src="{{ url_for(filepath) }}">
 {% endif %}
 
 {% endblock %}
