@@ -32,7 +32,7 @@ def list():
     print(row)
     return render_template('test.html', resultData=row)
 
-@app.route('/images')
+@app.route('/images', method)
 def images() :
     parameter_dict = request.args.to_dict()
     if len(parameter_dict) == 0:
