@@ -31,7 +31,7 @@ def list():
     row = db_class.executeAll(sql)
     print(row)
     return render_template('test.html', resultData=row)
-
+ 
 @app.route('/images')
 def images() :
     parameter_dict = request.args.to_dict()
