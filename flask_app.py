@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_restful import Resource, Api, reqparse
 import numpy as np
 import cv2
@@ -31,6 +31,15 @@ def list():
     row = db_class.executeAll(sql)
     print(row)
     return render_template('test.html', resultData=row)
+
+@app.route('/images')
+def images() :
+    parameter_dict = request.args.to_dict()
+    if len(parameter_dict) == 0:
+        file_list = os.listdir(Image_Path)
+        return render_template('image.html', File_List = file_list)
+
+    return render_template('image.html', filepath = Image_Path, image_file = request.args['image'])
 
 class Inputdata(Resource):
     def post(self):
