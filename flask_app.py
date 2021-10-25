@@ -21,7 +21,8 @@ Image_Path = os.getcwd() + '/images/'
 
 @app.route('/')
 def hello():
-    return render_template('index.html', resultData=Image_Path)
+    path = os.path.dirname(os.path.abspath(__file__))
+    return render_template('index.html', resultData=path)
 
 @app.route('/list')
 def list():
