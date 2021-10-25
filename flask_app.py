@@ -37,9 +37,9 @@ def images() :
     parameter_dict = request.args.to_dict()
     if len(parameter_dict) == 0:
         file_list = os.listdir(Image_Path)
-        return render_template('image.html', File_List = file_list)
+        return render_template('image.html', File_List = file_list, Isfile = 0)
 
-    return render_template('image.html', filepath = Image_Path, image_file = request.args['image'])
+    return render_template('image.html', filepath = Image_Path, image_file = request.args['image'], Isfile = 1)
 
 class Inputdata(Resource):
     def post(self):
