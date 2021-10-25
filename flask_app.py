@@ -95,5 +95,6 @@ class Inputdata(Resource):
 api.add_resource(Inputdata, '/camera')
 
 if __name__ == '__main__':
+    app.debug = True
     app.run()
 
