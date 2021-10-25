@@ -1,3 +1,5 @@
 Flask
 pymysql
 flask-restful
+opencv-python
+numpy

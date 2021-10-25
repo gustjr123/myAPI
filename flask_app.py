@@ -1,13 +1,15 @@
 from flask import Flask, render_template
 from flask_restful import Resource, Api, reqparse
+import numpy as np
+import cv2
 # from datetime import datetime
-# from werkzeug.utils import secure_filename
+import werkzeug
 import dbModule
 import os
 
 app = Flask(__name__)
 api = Api(app)
-
+Image_Path = os.getcwd() + '/images/'
 # UPLOAD_FOLDER_LOCATION = '/flask_api/app001/static/image'
 # ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 # app.config['UPLOAD_FOLDER_LOCATION'] = UPLOAD_FOLDER_LOCATION
@@ -19,8 +21,7 @@ api = Api(app)
 
 @app.route('/')
 def hello():
-    temp = os.getcwd()
-    return render_template('index.html', resultData=temp)
+    return render_template('index.html', resultData=Image_Path)
 
 @app.route('/list')
 def list():
@@ -36,10 +37,12 @@ class Inputdata(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str)
         parser.add_argument('path', type=str)
+        parser.add_argument('image', type=werkzeug.datastructures.FileStorage, location='files')
         args = parser.parse_args()
 
         name = args['name']
         path = args['path']
+        image = args['image'].read()
         val = (name, path)
 
         if name != "" and path != "" :
@@ -49,7 +52,35 @@ class Inputdata(Resource):
             db_class.execute(sql, val)
             db_class.commit()
 
+            # convert to numpy array
+            npimg = np.fromstring(image, np.uint8)
+            # convert numpy array to image
+            img = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
+            cv2.imwrite(Image_Path + name + '.png', img)
+
+            return {'name': name, 'path': path, 'image': 'success'}
+
         return {'name': name, 'path': path}
+
+# class Deletedata(Resource):
+#     def post(self):
+#         parser = reqparse.RequestParser()
+#         parser.add_argument('name', type=str)
+#         parser.add_argument('path', type=str)
+#         args = parser.parse_args()
+#
+#         name = args['name']
+#         path = args['path']
+#         val = (name, path)
+#
+#         if name != "" and path != "" :
+#             db_class = dbModule.Database()
+#             db_name = os.environ.get('DB_NAME')
+#             sql = "INSERT INTO " + db_name + ".test(name, path) VALUES (%s, %s)"
+#             db_class.execute(sql, val)
+#             db_class.commit()
+#
+#         return {'name': name, 'path': path}
 
 api.add_resource(Inputdata, '/camera')
 
