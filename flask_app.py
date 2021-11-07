@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from flask_restful import Resource, Api, reqparse
 import numpy as np
 import cv2
@@ -41,6 +41,15 @@ def images() :
         return render_template('image.html', File_List = file_list, Isfile = 0)
 
     return render_template('image.html', filepath = '"./../images/' + request.args['image'] + '"', Isfile = 1)
+
+@app.route('/get_image/<name>/<path>/<getname>')
+def get_image(name, path, getname):
+    file_name = Image_Path + path + '/' + name + '.png'
+    getting = getname + '.png'
+    return send_file(file_name,
+                     mimetype='text/png',
+                     attachment_filename=getting,  # 다운받아지는 파일 이름.
+                     as_attachment=True)
 
 class Inputdata(Resource):
     def post(self):
