@@ -42,8 +42,11 @@ def images() :
 
     return render_template('image.html', filepath = '"./../images/' + request.args['image'] + '"', Isfile = 1)
 
-@app.route('/get_image/<name>/<path>/<getname>')
-def get_image(name, path, getname):
+@app.route('/get_image')
+def get_image():
+    name = request.args.get('name')
+    path = request.args.get('path')
+    getname = request.args.get('getname')
     file_name = Image_Path + path + '/' + name + '.png'
     getting = getname + '.png'
     return send_file(file_name,
