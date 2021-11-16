@@ -33,6 +33,15 @@ def list():
     print(row)
     return render_template('test.html', resultData=row)
 
+@app.route('/path')
+def path():
+    db_class = dbModule.Database()
+    db_name = os.environ.get('DB_NAME')
+    sql = "SELECT name, path FROM " + db_name + ".test"
+    row = db_class.executeAll(sql)
+
+    return row
+
 @app.route('/images')
 def images() :
     parameter_dict = request.args.to_dict()
