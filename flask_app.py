@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 from flask_restful import Resource, Api, reqparse
 import numpy as np
 import cv2
@@ -40,7 +40,7 @@ def path():
     sql = "SELECT name, path FROM " + db_name + ".test"
     row = db_class.executeAll(sql)
 
-    return row
+    return jsonify(row)
 
 @app.route('/images')
 def images() :
