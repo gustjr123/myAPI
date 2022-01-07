@@ -2,9 +2,7 @@ from Firebase import db
 from flask import *
 from flask_restful import Api
 from imageClass import Inputdata
-import logging
 
-logging.basicConfig(filename = "logs/project.log", level = logging.DEBUG)
 app = Flask(__name__)
 api = Api(app)
 
@@ -30,9 +28,6 @@ def list():
         for t in date.val().keys() :
             temp.append(str(t))
         data[n] = temp
-
-    log_message = "{0}/{1}".format('Completeed dates', data)
-    logging.info(log_message)
 
     return render_template('list.html', data = data)
 
