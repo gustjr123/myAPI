@@ -1,5 +1,11 @@
 {% extends 'form.html' %}
 
 {% block content %}
-<div>Result : {{resultData}}<br></div>
+    <form action="/" method="post">
+        <input type="text" name="name">
+        <button type="submit">Submit</button>
+    </form>
+    {% for task in todo %}
+        {{ task }}
+    {% endfor %}
 {% endblock %}

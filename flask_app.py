@@ -1,121 +1,53 @@
-from flask import Flask, render_template, request, send_file, jsonify
-from flask_restful import Resource, Api, reqparse
-import numpy as np
-import cv2
-# from datetime import datetime
-import werkzeug
-import dbModule
-import os
+from Firebase import db
+from flask import *
+from flask_restful import Api
+from imageClass import Inputdata
+import logging
 
+logging.basicConfig(filename = "logs/project.log", level = logging.DEBUG)
 app = Flask(__name__)
 api = Api(app)
-Image_Path = os.getcwd() + '/images/'
-# UPLOAD_FOLDER_LOCATION = '/flask_api/app001/static/image'
-# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-# app.config['UPLOAD_FOLDER_LOCATION'] = UPLOAD_FOLDER_LOCATION
 
-# # allowed_file 함수 > 허용된 형태의 파일 형식인지 확인
-# def allowed_file(filename):
-#     return '.' in filename and \
-#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    if request.method == 'POST':
+        name = request.form['name']
+        db.child('todo').push(name)
+        todo = db.child('todo').get()
+        todo_list = todo.val()
+        return render_template('index.html', todo=todo_list.values())
+    return render_template('index.html')
 
-@app.route('/')
-def hello():
-    path = os.path.dirname(os.path.abspath(__file__))
-    return render_template('index.html', resultData=path)
-
-@app.route('/list')
+@app.route('/list', methods=['POST', 'GET'])
 def list():
-    db_class = dbModule.Database()
-    db_name = os.environ.get('DB_NAME')
-    sql = "SELECT id, name, path FROM " + db_name + ".test"
-    row = db_class.executeAll(sql)
-    print(row)
-    return render_template('test.html', resultData=row)
+    name = db.get()
+    nameList = name.val().keys()
 
-@app.route('/path')
-def path():
-    db_class = dbModule.Database()
-    db_name = os.environ.get('DB_NAME')
-    sql = "SELECT name, path FROM " + db_name + ".test"
-    row = db_class.executeAll(sql)
+    data = dict()
+    for n in nameList :
+        date = db.child(n).get()
+        temp = []
+        for t in date.val().keys() :
+            temp.append(str(t))
+        data[n] = temp
 
-    return jsonify(row)
+    log_message = "{0}/{1}".format('Completeed dates', data)
+    logging.info(log_message)
 
-@app.route('/images')
-def images() :
-    parameter_dict = request.args.to_dict()
-    if len(parameter_dict) == 0:
-        file_list = os.listdir(Image_Path)
-        return render_template('image.html', File_List = file_list, Isfile = 0)
+    return render_template('list.html', data = data)
 
-    return render_template('image.html', filepath = '"./../images/' + request.args['image'] + '"', Isfile = 1)
 
-@app.route('/get_image')
-def get_image():
-    name = request.args.get('name')
-    path = request.args.get('path')
-    getname = request.args.get('getname')
-    file_name = Image_Path + path + '/' + name + '.png'
-    getting = getname + '.png'
-    return send_file(file_name,
-                     mimetype='text/png',
-                     attachment_filename=getting,  # 다운받아지는 파일 이름.
-                     as_attachment=True)
+@app.route('/test', methods=['POST', 'GET'])
+def upload():
+    if request.method == 'POST':
+        name = request.form['name']
+        db.child('todo').push(name)
+        todo = db.child('todo').get()
+        todo_list = todo.val()
+        return render_template('index.html', todo=todo_list.values())
+    return render_template('index.html')
 
-class Inputdata(Resource):
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str)
-        parser.add_argument('path', type=str)
-        parser.add_argument('image', type=werkzeug.datastructures.FileStorage, location='files')
-        args = parser.parse_args()
-
-        name = args['name']
-        path = args['path']
-        image = args['image'].read()
-        val = (name, path)
-
-        if name != "" and path != "" :
-            db_class = dbModule.Database()
-            db_name = os.environ.get('DB_NAME')
-            sql = "INSERT INTO " + db_name + ".test(name, path) VALUES (%s, %s)"
-            db_class.execute(sql, val)
-            db_class.commit()
-
-            # convert to numpy array
-            npimg = np.fromstring(image, np.uint8)
-            # convert numpy array to image
-            img = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
-            cv2.imwrite(Image_Path + name + '.png', img)
-
-            return {'name': name, 'path': path, 'image': 'success'}
-
-        return {'name': name, 'path': path}
-
-# class Deletedata(Resource):
-#     def post(self):
-#         parser = reqparse.RequestParser()
-#         parser.add_argument('name', type=str)
-#         parser.add_argument('path', type=str)
-#         args = parser.parse_args()
-#
-#         name = args['name']
-#         path = args['path']
-#         val = (name, path)
-#
-#         if name != "" and path != "" :
-#             db_class = dbModule.Database()
-#             db_name = os.environ.get('DB_NAME')
-#             sql = "INSERT INTO " + db_name + ".test(name, path) VALUES (%s, %s)"
-#             db_class.execute(sql, val)
-#             db_class.commit()
-#
-#         return {'name': name, 'path': path}
-
-api.add_resource(Inputdata, '/camera')
+api.add_resource(Inputdata, '/image')
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
-
+    app.run(debug=True)

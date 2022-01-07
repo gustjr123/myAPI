@@ -1,0 +1,12 @@
+{% extends 'form.html' %}
+
+{% block content %}
+    {% for key, date in data.items() %}
+        <h3>{{ key }}</h3>
+
+        {% for d in date %}
+            <a href="/list">{{ d }}</a>
+        {% endfor %}
+
+    {% endfor %}
+{% endblock %}
