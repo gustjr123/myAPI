@@ -25,9 +25,16 @@ def list():
     for n in nameList :
         date = db.child(n).get()
         temp = []
+        # key값을 이용해서 이미지 파일 경로 포맷팅
         for t in date.val().keys() :
-            temp.append(str(t))
-        data[n] = temp
+            temp.append("{0}/{1}/{2}_{3}.png".format(n, t, n, t))
+        data[n] = []
+        # 이미지 경로를 통한 storage url값 리스트에 저장
+        for path in temp :
+            data[n].append(storage.child(path).get_url(None))
+
+    log_message = "{0}/{1}".format('Completeed dates', data)
+    logging.info(log_message)
 
     return render_template('list.html', data = data)
 
