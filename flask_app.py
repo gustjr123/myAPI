@@ -33,9 +33,6 @@ def list():
         for path in temp :
             data[n].append(storage.child(path).get_url(None))
 
-    log_message = "{0}/{1}".format('Completeed dates', data)
-    logging.info(log_message)
-
     return render_template('list.html', data = data)
 
 
