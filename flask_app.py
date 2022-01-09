@@ -1,4 +1,4 @@
-from Firebase import db
+from Firebase import db, storage
 from flask import *
 from flask_restful import Api
 from imageClass import Inputdata
