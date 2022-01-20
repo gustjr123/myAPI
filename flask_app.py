@@ -1,7 +1,8 @@
-from Firebase import db, storage
+from Firebase import db
 from flask import *
 from flask_restful import Api
 from imageClass import Inputdata
+from personClass import Updateperson
 
 app = Flask(__name__)
 api = Api(app)
@@ -18,22 +19,18 @@ def index():
 
 @app.route('/list', methods=['POST', 'GET'])
 def list():
-    name = db.get()
+    name = db.child('person').get()
     nameList = name.val().keys()
 
     data = dict()
-    for n in nameList :
-        date = db.child(n).get()
+    for n in nameList:
+        urls = db.child('person').child(n).child('data').get()
         temp = []
-        # key값을 이용해서 이미지 파일 경로 포맷팅
-        for t in date.val().keys() :
-            temp.append("{0}/{1}/{2}_{3}.png".format(n, t, n, t))
-        data[n] = []
-        # 이미지 경로를 통한 storage url값 리스트에 저장
-        for path in temp :
-            data[n].append(storage.child(path).get_url(None))
+        for url in urls.each():
+            temp.append(url.val())
+        data[n] = temp
 
-    return render_template('list.html', data = data)
+    return render_template('list.html', data=data)
 
 
 @app.route('/test', methods=['POST', 'GET'])
@@ -47,6 +44,7 @@ def upload():
     return render_template('index.html')
 
 api.add_resource(Inputdata, '/image')
+api.add_resource(Updateperson, '/person')
 
 if __name__ == '__main__':
     app.run(debug=True)
